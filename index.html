@@ -69,6 +69,7 @@
   .b.indie{background:rgba(181,123,255,.15);color:var(--indie)}
   .b.contest{background:rgba(91,140,255,.15);color:var(--accent)}
   .b.etc{background:rgba(154,160,170,.15);color:var(--tx2)}
+  .b.student{background:rgba(56,189,248,.15);color:#38bdf8}
   .dday{font-weight:700}
   .empty{text-align:center;color:var(--tx2);padding:40px}
   .foot{margin-top:30px;color:var(--tx2);font-size:12px;text-align:center;line-height:1.8}
@@ -143,6 +144,7 @@
 <script>
 // ===== 수집 데이터 (매일 아침 자동 갱신됨) =====
 const DATA = [
+  {id:"WV_bgc_supporters10", org:"부산정보산업진흥원", region:"부산", title:"부산글로벌게임센터 서포터즈 10기 모집 (BIC·지스타 참관)", start:"", end:"2026-08-04", support:"BIC·지스타 등 게임 행사 참관 및 홍보 활동 (대학생 대상 서포터즈, 공고문 참조)", url:"https://www.wevity.com/?c=find&s=1&sp=name&sw=%EA%B2%8C%EC%9E%84", created:"2026-07-29", indie:false, src:"위비티", type:"대학생"},
   {id:"WV_nhn_nan2026", org:"NHN", region:"전국", title:"[NHN] 게임 X AI 해커톤 NAN 2026", start:"2026-07-10", end:"2026-08-10", support:"상금 대상 5,000만원·최우수 2,000만원·우수 1,000만원 + 채용 특전 (만 19세 이상, 개인 또는 3인 이하 팀)", url:"https://nan2026.nhn.com/", created:"2026-07-13", indie:true, src:"위비티", type:"공모전"},
   {id:"KOCCA_326D00089010", org:"한국콘텐츠진흥원", region:"전국", title:"2026 스웨덴 게임 컨퍼런스(Sweden Game Conference) 참가기업 모집", start:"2026-07-10", end:"2026-08-10", support:"항공권(1인 왕복)·전시/상담 공간·비즈매칭·현지 게임기업 방문 (창업 5년 미만 인디 게임 개발사, 5개사 내외)", url:"https://www.kocca.kr/kocca/pims/view.do?intcNo=326D00089010&menuNo=204104", created:"2026-07-09", indie:true, src:"KOCCA", type:"기타"},
   {id:"PBLN_000000000124833", org:"대구디지털혁신진흥원", region:"대구", title:"대구글로벌게임센터 글로벌 공동관(지스타) 참가기업 추가모집", start:"2026-07-27", end:"2026-08-25", support:"지스타 대구공동관 부스 구축·전시 비품 일부 지원 (대구 게임 제작·배급업)", url:"https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124833", created:"2026-07-28", indie:false, src:"기업마당", type:"기타"},
@@ -189,7 +191,7 @@ const TYPE = {
 function rtype(r){ return r.type || TYPE[r.id] || (r.src==="링커리어"?"공모전":"기타"); }
 
 let filter="all";
-const FILTERS=[["all","전체"],["new","🆕 신규"],["soon","⏰ 마감임박"],["fund","💰 사업화자금"],["indie","🎨 인디"],["contest","🏆 대외활동"],["etc","📦 기타"]];
+const FILTERS=[["all","전체"],["new","🆕 신규"],["soon","⏰ 마감임박"],["fund","💰 사업화자금"],["indie","🎨 인디"],["contest","🏆 대외활동"],["etc","📦 기타"],["student","🎓 대학생 전용"]];
 
 function render(){
   const openData = DATA.filter(isOpen);
@@ -200,6 +202,7 @@ function render(){
   else if(filter==="indie") rows=rows.filter(r=>r.indie);
   else if(filter==="contest") rows=rows.filter(r=>rtype(r)==="공모전");
   else if(filter==="etc") rows=rows.filter(r=>rtype(r)==="기타");
+  else if(filter==="student") rows=rows.filter(r=>rtype(r)==="대학생");
 
   rows.sort((a,b)=>{
     const da=dday(a.end), db=dday(b.end);
@@ -218,7 +221,8 @@ function render(){
     ["사업화자금", openData.filter(r=>rtype(r)==="자금").length],
     ["인디", openData.filter(r=>r.indie).length],
     ["대외활동", openData.filter(r=>rtype(r)==="공모전").length],
-    ["기타", openData.filter(r=>rtype(r)==="기타").length]
+    ["기타", openData.filter(r=>rtype(r)==="기타").length],
+    ["대학생 전용", openData.filter(r=>rtype(r)==="대학생").length]
   ];
   document.getElementById("stats").innerHTML = stat.map(s=>
     `<div class="stat"><div class="n">${s[1]}</div><div class="l">${s[0]}</div></div>`).join("");
@@ -240,6 +244,7 @@ function render(){
     if(r.indie) badges.push('<span class="b indie">인디</span>');
     if(t==="자금") badges.push('<span class="b fund">사업화자금</span>');
     else if(t==="공모전") badges.push('<span class="b contest">대외활동</span>');
+    else if(t==="대학생") badges.push('<span class="b student">대학생 전용</span>');
     else badges.push('<span class="b etc">기타</span>');
     const endText = /^\d{4}-\d{2}-\d{2}$/.test(r.end)? `${r.start} ~ ${r.end}` : r.end;
     return `<div class="card">
